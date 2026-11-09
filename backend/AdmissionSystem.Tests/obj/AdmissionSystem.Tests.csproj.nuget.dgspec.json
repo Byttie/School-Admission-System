@@ -1,7 +1,7 @@
 {
   "format": 1,
   "restore": {
-    "e:\\School Admission System\\backend\\AdmissionSystem.Tests\\AdmissionSystem.Tests.csproj": {}
+    "E:\\School Admission System\\backend\\AdmissionSystem.Tests\\AdmissionSystem.Tests.csproj": {}
   },
   "projects": {
     "E:\\School Admission System\\backend\\AdmissionSystem.Api\\AdmissionSystem.Api.csproj": {
@@ -498,14 +498,14 @@
         }
       }
     },
-    "e:\\School Admission System\\backend\\AdmissionSystem.Tests\\AdmissionSystem.Tests.csproj": {
+    "E:\\School Admission System\\backend\\AdmissionSystem.Tests\\AdmissionSystem.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "e:\\School Admission System\\backend\\AdmissionSystem.Tests\\AdmissionSystem.Tests.csproj",
+        "projectUniqueName": "E:\\School Admission System\\backend\\AdmissionSystem.Tests\\AdmissionSystem.Tests.csproj",
         "projectName": "AdmissionSystem.Tests",
-        "projectPath": "e:\\School Admission System\\backend\\AdmissionSystem.Tests\\AdmissionSystem.Tests.csproj",
+        "projectPath": "E:\\School Admission System\\backend\\AdmissionSystem.Tests\\AdmissionSystem.Tests.csproj",
         "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "e:\\School Admission System\\backend\\AdmissionSystem.Tests\\obj\\",
+        "outputPath": "E:\\School Admission System\\backend\\AdmissionSystem.Tests\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config"
