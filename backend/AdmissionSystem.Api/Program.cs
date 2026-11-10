@@ -1,3 +1,4 @@
+using AdmissionSystem.Api;
 using AdmissionSystem.Api.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +8,7 @@ var connStr = builder.Configuration.GetConnectionString("Default")
     ?? throw new InvalidOperationException("ConnectionStrings:Default is not set");
 
 builder.Services.AddDbContext<AppDbContext>(o => o.UseNpgsql(connStr));
+builder.Services.AddSingleton(HoldSettings.FromConfiguration(builder.Configuration));
 builder.Services.AddControllers();
 builder.Services.AddCors(o => o.AddDefaultPolicy(p =>
     p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
