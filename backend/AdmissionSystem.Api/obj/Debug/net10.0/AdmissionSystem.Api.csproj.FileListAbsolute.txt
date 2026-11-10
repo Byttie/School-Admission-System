@@ -121,3 +121,11 @@ E:\School Admission System\backend\AdmissionSystem.Api\obj\Debug\net10.0\refint\
 E:\School Admission System\backend\AdmissionSystem.Api\obj\Debug\net10.0\AdmissionSystem.Api.pdb
 E:\School Admission System\backend\AdmissionSystem.Api\obj\Debug\net10.0\AdmissionSystem.Api.genruntimeconfig.cache
 E:\School Admission System\backend\AdmissionSystem.Api\obj\Debug\net10.0\ref\AdmissionSystem.Api.dll
+C:\Users\User\AppData\Local\Temp\apibuild\appsettings.Development.json
+C:\Users\User\AppData\Local\Temp\apibuild\appsettings.json
+C:\Users\User\AppData\Local\Temp\apibuild\AdmissionSystem.Api.staticwebassets.endpoints.json
+C:\Users\User\AppData\Local\Temp\apibuild\AdmissionSystem.Api.exe
+C:\Users\User\AppData\Local\Temp\apibuild\AdmissionSystem.Api.deps.json
+C:\Users\User\AppData\Local\Temp\apibuild\AdmissionSystem.Api.runtimeconfig.json
+C:\Users\User\AppData\Local\Temp\apibuild\AdmissionSystem.Api.dll
+C:\Users\User\AppData\Local\Temp\apibuild\AdmissionSystem.Api.pdb
