@@ -7,6 +7,9 @@ namespace AdmissionSystem.Api.Controllers;
 public record HoldCreatedResponse(
     Guid HoldId, Guid ClassId, string StudentId, string Status, DateTime ExpiresAt);
 
+public record HoldResponse(
+    Guid HoldId, Guid ClassId, string ClassName, string StudentId, string Status, DateTime ExpiresAt);
+
 [ApiController]
 public class HoldsController(AppDbContext db, HoldSettings settings) : ControllerBase
 {
@@ -61,6 +64,49 @@ public class HoldsController(AppDbContext db, HoldSettings settings) : Controlle
 
         return Created($"/holds/{hold.Id}", new HoldCreatedResponse(
             hold.Id, hold.ClassId, hold.StudentId, hold.Status.ToString(), hold.ExpiresAt));
+    }
+
+    [HttpGet("/holds/{holdId:guid}")]
+    public async Task<IActionResult> Get(Guid holdId)
+    {
+        var hold = await db.Holds
+            .Include(h => h.Class)
+            .FirstOrDefaultAsync(h => h.Id == holdId);
+
+        if (hold is null)
+            return Problem("Application not found.", statusCode: 404);
+
+        return Ok(ToResponse(hold, DateTime.UtcNow));
+    }
+
+    [HttpGet("/me/holds")]
+    public async Task<IActionResult> MyHolds()
+    {
+        var studentId = Request.Headers[StudentIdHeader].ToString().Trim();
+        var error = ValidateStudentId(studentId);
+        if (error is not null)
+            return error;
+
+        var holds = await db.Holds
+            .Include(h => h.Class)
+            .Where(h => h.StudentId == studentId)
+            .OrderByDescending(h => h.CreatedAt)
+            .ToListAsync();
+
+        var now = DateTime.UtcNow;
+        return Ok(holds.Select(h => ToResponse(h, now)));
+    }
+
+    private static HoldResponse ToResponse(Hold hold, DateTime now) =>
+        new(hold.Id, hold.ClassId, hold.Class.Name, hold.StudentId,
+            CurrentStatus(hold, now).ToString(), hold.ExpiresAt);
+
+    private static HoldStatus CurrentStatus(Hold hold, DateTime now)
+    {
+        if (hold.Status == HoldStatus.HELD && hold.ExpiresAt <= now)
+            return HoldStatus.EXPIRED;
+
+        return hold.Status;
     }
 
     private IActionResult? ValidateStudentId(string studentId)
