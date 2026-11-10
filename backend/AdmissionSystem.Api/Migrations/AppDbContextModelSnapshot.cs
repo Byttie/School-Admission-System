@@ -22,6 +22,40 @@ namespace AdmissionSystem.Api.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("AdmissionSystem.Api.Data.Hold", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ClassId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasMaxLength(17)
+                        .HasColumnType("character varying(17)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("ClassId", "Status", "ExpiresAt");
+
+                    b.ToTable("Holds");
+                });
+
             modelBuilder.Entity("AdmissionSystem.Api.Data.SchoolClass", b =>
                 {
                     b.Property<Guid>("Id")
@@ -30,7 +64,8 @@ namespace AdmissionSystem.Api.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<int>("TotalSeats")
                         .HasColumnType("integer");
@@ -38,6 +73,22 @@ namespace AdmissionSystem.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Classes");
+                });
+
+            modelBuilder.Entity("AdmissionSystem.Api.Data.Hold", b =>
+                {
+                    b.HasOne("AdmissionSystem.Api.Data.SchoolClass", "Class")
+                        .WithMany("Holds")
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Class");
+                });
+
+            modelBuilder.Entity("AdmissionSystem.Api.Data.SchoolClass", b =>
+                {
+                    b.Navigation("Holds");
                 });
 #pragma warning restore 612, 618
         }
