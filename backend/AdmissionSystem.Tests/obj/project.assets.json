@@ -121,24 +121,6 @@
       "Microsoft.EntityFrameworkCore.Analyzers/10.0.14": {
         "type": "package"
       },
-      "Microsoft.EntityFrameworkCore.InMemory/10.0.14": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.EntityFrameworkCore": "10.0.14",
-          "Microsoft.Extensions.Caching.Memory": "10.0.14",
-          "Microsoft.Extensions.Logging": "10.0.14"
-        },
-        "compile": {
-          "lib/net10.0/Microsoft.EntityFrameworkCore.InMemory.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/net10.0/Microsoft.EntityFrameworkCore.InMemory.dll": {
-            "related": ".xml"
-          }
-        }
-      },
       "Microsoft.EntityFrameworkCore.Relational/10.0.14": {
         "type": "package",
         "dependencies": {
@@ -1492,21 +1474,6 @@
         "docs/PACKAGE.md",
         "microsoft.entityframeworkcore.analyzers.10.0.14.nupkg.sha512",
         "microsoft.entityframeworkcore.analyzers.nuspec"
-      ]
-    },
-    "Microsoft.EntityFrameworkCore.InMemory/10.0.14": {
-      "sha512": "g70gixwkCTNuM6lMfElDzU9mtYVX6CYZ6ZhFbxZlvQv7Y9fRHmypflGHj3ivFARSlLgYuGmeEY9ebctOcHqp1w==",
-      "type": "package",
-      "path": "microsoft.entityframeworkcore.inmemory/10.0.14",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "Icon.png",
-        "PACKAGE.md",
-        "lib/net10.0/Microsoft.EntityFrameworkCore.InMemory.dll",
-        "lib/net10.0/Microsoft.EntityFrameworkCore.InMemory.xml",
-        "microsoft.entityframeworkcore.inmemory.10.0.14.nupkg.sha512",
-        "microsoft.entityframeworkcore.inmemory.nuspec"
       ]
     },
     "Microsoft.EntityFrameworkCore.Relational/10.0.14": {
@@ -2947,7 +2914,6 @@
     "net10.0": [
       "AdmissionSystem.Api >= 1.0.0",
       "Microsoft.AspNetCore.Mvc.Testing >= 10.0.14",
-      "Microsoft.EntityFrameworkCore.InMemory >= 10.0.14",
       "Microsoft.NET.Test.Sdk >= 17.14.1",
       "coverlet.collector >= 6.0.4",
       "xunit >= 2.9.3",
@@ -3004,10 +2970,6 @@
         "targetAlias": "net10.0",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Testing": {
-            "target": "Package",
-            "version": "[10.0.14, )"
-          },
-          "Microsoft.EntityFrameworkCore.InMemory": {
             "target": "Package",
             "version": "[10.0.14, )"
           },
