@@ -1,0 +1,49 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: school
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d school"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+  backend:
+    image: rag1b/admission-backend:latest
+    environment:
+      ConnectionStrings__Default: "Host=db;Port=5432;Database=school;Username=postgres;Password=postgres"
+      HOLD_DURATION_SECONDS: ${HOLD_DURATION_SECONDS:-600}
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    image: rag1b/admission-frontend:latest
+    environment:
+      API_URL: http://localhost:8080
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+  backend-tests:
+    build:
+      context: ./backend
+      target: test
+    environment:
+      TEST_DB_CONNECTION: "Host=db;Port=5432;Username=postgres;Password=postgres"
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles:
+      - test
+
+volumes:
+  db-data:
