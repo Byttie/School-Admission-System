@@ -1,4 +1,5 @@
-const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
+const BASE_URL =
+  window.APP_CONFIG?.apiUrl || import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const MESSAGES_BY_STATUS = {
   400: "Please check the information you entered.",
