@@ -10,6 +10,8 @@ public record HoldCreatedResponse(
 public record HoldResponse(
     Guid HoldId, Guid ClassId, string ClassName, string StudentId, string Status, DateTime ExpiresAt);
 
+public record ConfirmResponse(Guid HoldId, string Status);
+
 [ApiController]
 public class HoldsController(AppDbContext db, HoldSettings settings) : ControllerBase
 {
@@ -95,6 +97,82 @@ public class HoldsController(AppDbContext db, HoldSettings settings) : Controlle
 
         var now = DateTime.UtcNow;
         return Ok(holds.Select(h => ToResponse(h, now)));
+    }
+
+    [HttpPost("/holds/{holdId:guid}/confirm")]
+    public async Task<IActionResult> Confirm(Guid holdId)
+    {
+        var studentId = Request.Headers[StudentIdHeader].ToString().Trim();
+        var error = ValidateStudentId(studentId);
+        if (error is not null)
+            return error;
+
+        var now = DateTime.UtcNow;
+
+        await db.Holds
+            .Where(h => h.Id == holdId
+                     && h.StudentId == studentId
+                     && h.Status == HoldStatus.HELD
+                     && h.ExpiresAt > now)
+            .ExecuteUpdateAsync(s => s.SetProperty(h => h.Status, HoldStatus.CONFIRMED));
+
+        var hold = await db.Holds.AsNoTracking().FirstOrDefaultAsync(h => h.Id == holdId);
+
+        if (hold is null)
+            return Problem("Application not found.", statusCode: 404);
+
+        if (hold.StudentId != studentId)
+            return Problem("This application belongs to a different student.", statusCode: 403);
+
+        var status = CurrentStatus(hold, now);
+
+        if (status == HoldStatus.CONFIRMED)
+            return Ok(new ConfirmResponse(hold.Id, status.ToString()));
+
+        if (status == HoldStatus.EXPIRED)
+            return Problem("The time to pay for this application has expired. Please apply again.",
+                statusCode: 409, title: "Application expired");
+
+        return Problem("This application was cancelled and can no longer be paid for.",
+            statusCode: 409, title: "Application cancelled");
+    }
+
+    [HttpDelete("/holds/{holdId:guid}")]
+    public async Task<IActionResult> Cancel(Guid holdId)
+    {
+        var studentId = Request.Headers[StudentIdHeader].ToString().Trim();
+        var error = ValidateStudentId(studentId);
+        if (error is not null)
+            return error;
+
+        var now = DateTime.UtcNow;
+
+        await db.Holds
+            .Where(h => h.Id == holdId
+                     && h.StudentId == studentId
+                     && h.Status == HoldStatus.HELD
+                     && h.ExpiresAt > now)
+            .ExecuteUpdateAsync(s => s.SetProperty(h => h.Status, HoldStatus.CANCELLED));
+
+        var hold = await db.Holds.AsNoTracking().FirstOrDefaultAsync(h => h.Id == holdId);
+
+        if (hold is null)
+            return Problem("Application not found.", statusCode: 404);
+
+        if (hold.StudentId != studentId)
+            return Problem("This application belongs to a different student.", statusCode: 403);
+
+        var status = CurrentStatus(hold, now);
+
+        if (status == HoldStatus.CANCELLED)
+            return NoContent();
+
+        if (status == HoldStatus.CONFIRMED)
+            return Problem("This admission is already confirmed and cannot be cancelled.",
+                statusCode: 409, title: "Already confirmed");
+
+        return Problem("This application has already expired.",
+            statusCode: 409, title: "Application expired");
     }
 
     private static HoldResponse ToResponse(Hold hold, DateTime now) =>
