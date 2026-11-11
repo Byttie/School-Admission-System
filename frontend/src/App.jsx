@@ -1,35 +1,51 @@
-import { useEffect, useState } from "react";
-import { api } from "./api";
+import { useState } from "react";
+import StudentIdBar from "./components/StudentIdBar";
+import ClassesPage from "./pages/ClassesPage";
+import CreateClassPage from "./pages/CreateClassPage";
+import MyApplicationsPage from "./pages/MyApplicationsPage";
+import ApplicationPage from "./pages/ApplicationPage";
+
+const TABS = [
+  { page: "classes", label: "Classes" },
+  { page: "my-applications", label: "My Applications" },
+  { page: "create-class", label: "Create Class (Admin)" },
+];
 
 export default function App() {
-  const [health, setHealth] = useState("checking...");
-  const [classes, setClasses] = useState([]);
-  const [name, setName] = useState("");
-  const [seats, setSeats] = useState(120);
-  const [error, setError] = useState("");
+  const [page, setPage] = useState("classes");
+  const [openHoldId, setOpenHoldId] = useState(null);
 
-  const load = () => api("/classes").then(setClasses).catch(e => setError(e.message));
-
-  useEffect(() => {
-    api("/health").then(h => setHealth(JSON.stringify(h))).catch(() => setHealth("backend unreachable"));
-    load();
-  }, []);
-
-  const create = async () => {
-    try {
-      await api("/classes", { method: "POST", body: JSON.stringify({ name, totalSeats: Number(seats) }) });
-      setName(""); setError(""); load();
-    } catch (e) { setError(e.message); }
+  const openApplication = (holdId) => {
+    setOpenHoldId(holdId);
+    setPage("application");
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <p>Health: {health}</p>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <input value={name} onChange={e => setName(e.target.value)} placeholder="Class name" />
-      <input type="number" value={seats} onChange={e => setSeats(e.target.value)} />
-      <button onClick={create}>Create</button>
-      <ul>{classes.map(c => <li key={c.id}>{c.name} ({c.totalSeats})</li>)}</ul>
+    <div className="app">
+      <header>
+        <h1>School Admission</h1>
+        <StudentIdBar />
+        <nav>
+          {TABS.map((tab) => (
+            <button
+              key={tab.page}
+              className={page === tab.page ? "tab active" : "tab"}
+              onClick={() => setPage(tab.page)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+      </header>
+
+      <main>
+        {page === "classes" && <ClassesPage onApplied={openApplication} />}
+        {page === "my-applications" && <MyApplicationsPage onOpen={openApplication} />}
+        {page === "create-class" && <CreateClassPage />}
+        {page === "application" && (
+          <ApplicationPage holdId={openHoldId} onBack={() => setPage("my-applications")} />
+        )}
+      </main>
     </div>
   );
 }
